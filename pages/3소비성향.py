@@ -13,7 +13,7 @@ show_sidebar()
 st.title("🛍️ 나의 소비 성향 분석")
 current_user = st.session_state.current_user
 
-# ── 가계부 데이터 불러오기 ──────────────────────────
+# 가계부 데이터 불러오기
 all_data = load_ledger()
 my_data = [r for r in all_data if r["user"] == current_user]
 
@@ -23,7 +23,7 @@ if not my_data:
 
 df = pd.DataFrame(my_data)
 
-# ── 분석 기간 선택 ──────────────────────────────────
+# 분석 기간 선택
 st.subheader("📅 분석 기간 선택")
 col1, col2 = st.columns(2)
 with col1:
@@ -41,14 +41,17 @@ if filtered.empty:
 
 st.divider()
 
-# ── 월 소득 입력 ────────────────────────────────────
+# 월 소득 입력
 st.subheader("💰 이번 달 소득 입력")
 st.caption("저축률 계산을 위해 세후 실수령액을 입력해주세요.")
-monthly_income = st.number_input("월 소득 (원)", min_value=0, step=100000, value=2500000)
+
+default_income = st.session_state.get('monthly_income', 2500000)
+monthly_income = st.number_input("월 소득 (원)", min_value=0, step=100000, value=default_income)
+st.session_state.monthly_income = monthly_income
 
 st.divider()
 
-# ── 카테고리별 지출 계산 ────────────────────────────
+# 카테고리별 지출 계산
 total = filtered["amount"].sum()
 by_cat = filtered.groupby("category")["amount"].sum()
 
@@ -75,7 +78,7 @@ leisure_rate   = leisure_amt   / income_base * 100
 food_rate    = get_amt("식비")    / total * 100 if total > 0 else 0
 housing_rate = get_amt("주거비")  / income_base * 100 if income_base > 0 else 0
 
-# ── 핵심 지표 카드 ──────────────────────────────────
+# 핵심 지표 카드
 st.subheader(f"📊 {sel_year}년 {sel_month}월 핵심 지표")
 
 col1, col2, col3, col4 = st.columns(4)
@@ -103,7 +106,7 @@ with col4:
 st.caption("💡 저축률·주거비·필수지출·여가 비율은 소득 기준 / 식비(엥겔지수)는 총지출 기준")
 st.divider()
 
-# ── 50/30/20 법칙 비교 ──────────────────────────────
+# 50/30/20 법칙 비교
 st.subheader("📐 50/30/20 법칙으로 본 내 지출")
 st.caption("소득 기준 권장: 필수지출 50% 이하 / 여가·욕구 30% 이하 / 저축·투자 20% 이상")
 
@@ -137,7 +140,7 @@ st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
 
-# ── 소비 유형 판별 ──────────────────────────────────
+# 소비 유형 판별
 st.subheader("🔍 나의 소비 유형 진단")
 
 # 점수 계산 (총 10점)
@@ -216,7 +219,7 @@ st.markdown(
 )
 
 # 맞춤 조언
-st.subheader("💡 맞춤 조언")
+st.subheader("💡가계부 기반 맞춤 소비 조언")
 for tip in advice:
     st.markdown(f"- {tip}")
 
@@ -225,7 +228,7 @@ st.session_state.user_type = user_type
 
 st.divider()
 
-# ── 계정과목별 상세 내역 ────────────────────────────
+# 계정과목별 상세 내역
 st.subheader("📋 계정과목별 지출 상세")
 
 rows = []

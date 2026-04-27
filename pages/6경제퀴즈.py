@@ -1,34 +1,3 @@
-'''
-import streamlit as st
-import time
-
-# 로그인 체크
-if not st.session_state.get('login', False):
-    st.warning("로그인이 필요한 페이지입니다. 홈으로 이동해주세요.")
-    st.stop()
-
-# 사이드바 설정
-st.sidebar.info(f"👤 접속 중: {st.session_state.current_user}")
-
-st.title("🧠 경제 상식 OX 퀴즈")
-
-# [과제 요건 3] 캐싱 기능
-@st.cache_data
-def get_quiz_data():
-    time.sleep(0.5) # 로딩 시뮬레이션
-    return [
-        {"q": "기준 금리가 오르면 대출 이자 부담도 늘어난다.", "a": "O"},
-        {"q": "인플레이션은 물가가 하락하는 현상을 말한다.", "a": "X"}
-    ]
-
-quizzes = get_quiz_data()
-with st.form("quiz"):
-    # ... (기존 퀴즈 로직 동일) ...
-    st.form_submit_button("제출")
-
-# 퀴즈 페이지 마지막 부분에 추가
-'''
-
 import streamlit as st
 import json
 import time

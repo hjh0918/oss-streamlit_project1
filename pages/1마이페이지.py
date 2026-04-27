@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-from datetime import date      # ← 추가
-from utils import load_ledger, show_sidebar  # ← 이걸로 교체
+from datetime import date   
+from utils import load_ledger, show_sidebar  
 
 # 로그인 체크
 if not st.session_state.get('login', False):
@@ -22,25 +22,18 @@ with col1:
 
 with col2:
     st.subheader("🧠 경제 퀴즈 점수")
-    score = st.session_state.get('quiz_score', "미응시")
-    st.metric(label="최근 퀴즈 점수", value=f"{score}점")
+    score = st.session_state.get('quiz_score', None)
+    if score is not None:
+        st.metric(label="최근 퀴즈 점수", value=f"{score}점")
+    else:
+        st.metric(label="최근 퀴즈 점수", value="미응시")
 
 st.divider()
-
-# 종합 평가 (예시)
-#if st.session_state.get('quiz_done') and st.session_state.get('user_type'):
-#    st.success("✅ 모든 테스트를 완료하셨습니다!")
-#    st.write(f"**{st.session_state.current_user}**님은 지식과 습관을 모두 갖추기 위해 노력 중이시군요!")
-#else:
-#    st.warning("아직 완료하지 않은 테스트가 있습니다. 모든 테스트를 마치고 리포트를 확인하세요.")
-
-# 기존 점수/유형 표시에 추가할 부분
 
 # 가계부 요약 연동
 all_data = load_ledger()
 my_data = [r for r in all_data if r["user"] == st.session_state.current_user]
 
-# ✅ 바꾼 코드
 if my_data:
     df = pd.DataFrame(my_data)
     st.subheader("💰 이번 달 지출 요약")
@@ -55,7 +48,7 @@ if my_data:
 
 st.divider()
 
-# ── 회원 탈퇴 ───────────────────────────────────────
+# 회원 탈퇴
 with st.expander("⚠️ 회원 탈퇴"):
     st.warning("탈퇴 시 모든 가계부 데이터가 삭제되며 복구할 수 없습니다.")
     confirm = st.text_input("탈퇴하려면 아이디를 입력하세요", key="confirm_delete")
